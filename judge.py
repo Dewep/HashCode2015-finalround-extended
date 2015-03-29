@@ -8,4 +8,4 @@ from sys import argv
 
 hashcode = HashCode("final_round.in")
 
-hashcode.score(argv[1] if len(argv) > 1 else "final_round.out")
+hashcode.judge(argv[1] if len(argv) > 1 else "final_round.out")

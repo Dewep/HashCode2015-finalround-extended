@@ -60,7 +60,7 @@ class HashCode(object):
                     res.append(str(balloon.get_movement(tour)))
                 print(" ".join(res), file=f)
 
-    def score(self, file):
+    def judge(self, file):
 
         with open(file, "r") as f:
             score = 0
@@ -97,3 +97,33 @@ class HashCode(object):
 
             print("\nFinal score: %d" % score)
             return score
+
+    def random(self):
+        for tour in range(0, self.nb_tours):
+            for balloon in self.balloons:
+                moves = [0]
+                if balloon.altitude > 1:
+                    moves.append(-1)
+                if balloon.altitude < self.max_altitude - 1:
+                    moves.append(1)
+                from random import randint
+                balloon.move(moves[randint(0, len(moves) - 1)])
+
+    def random_check(self):
+        def _is_good_next_position(b, move):
+            if not b.is_lost and 0 < b.altitude + move < self.max_altitude:
+                y, _ = self.map.altitudes[b.altitude + move][b.y][b.x].get_next()
+                return self.radius <= y <= self.max_y - self.radius
+            return False
+
+        for tour in range(0, self.nb_tours):
+            for balloon in self.balloons:
+                moves = [0]
+                if balloon.altitude > 1 and _is_good_next_position(balloon, -1):
+                    moves.append(-1)
+                if balloon.altitude < self.max_altitude - 1 and _is_good_next_position(balloon, 1):
+                    moves.append(1)
+                if len(moves) > 1 and not _is_good_next_position(balloon, 0):
+                    moves.remove(0)
+                from random import randint
+                balloon.move(moves[randint(0, len(moves) - 1)])
