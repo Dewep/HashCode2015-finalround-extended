@@ -17,13 +17,13 @@ class Balloon(object):
         self.is_lost = False
 
     def _is_target_covered_by_balloon(self, target):
-        if fabs(target.x - self.x) > self.hashcode.radius:
-            return False
         if fabs(target.y - self.y) > self.hashcode.radius:
             return False
+        if min(fabs(target.x - self.x), fabs(self.hashcode.max_x - fabs(target.x - self.x))) > self.hashcode.radius:
+            return False
         dist = min(fabs(self.x - target.x), self.hashcode.max_x - fabs(self.x - target.x))
-        tmp = pow(target.y - self.y, 2) + pow(dist, 2)
-        return tmp < pow(self.hashcode.radius, 2)
+        tmp = pow(self.y - target.y, 2) + pow(dist, 2)
+        return tmp <= pow(self.hashcode.radius, 2)
 
     def move(self, move):
         if self.is_lost:
@@ -47,7 +47,7 @@ class Balloon(object):
     def score(self, targets):
         score = 0
         if self.altitude > 0:
-            for target in targets:
+            for target in targets[:]:
                 if self._is_target_covered_by_balloon(target):
                     targets.remove(target)
                     score += 1
